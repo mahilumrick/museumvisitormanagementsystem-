@@ -5,7 +5,7 @@ export const VISITOR_TYPES = ['Regular', 'Student', 'Senior', 'PWD', 'VIP'];
 const NAME_RE = /^[A-Za-zÀ-ÿñÑ][A-Za-zÀ-ÿñÑ .'-]{1,59}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-/** Validates visitor input. Throws ApiError(400) with per-field messages. */
+// Validates visitor input. //
 export function validateVisitor(input, { allowPastDate = false } = {}) {
   const errors = {};
   const fullName = String(input.full_name ?? '').trim().replace(/\s+/g, ' ');
