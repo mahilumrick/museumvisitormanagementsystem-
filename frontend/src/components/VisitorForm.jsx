@@ -31,7 +31,7 @@ export default function VisitorForm({ initial, onSubmit, onCancel }) {
   const [errors, setErrors] = useState({});
   const [busy, setBusy] = useState(false);
 
-  const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
+  const set = (k) => (e) => setF({ ..f, [k]: e.target.value });
 
   async function submit(ev) {
     ev.preventDefault();
@@ -40,7 +40,7 @@ export default function VisitorForm({ initial, onSubmit, onCancel }) {
     if (Object.keys(found).length) return;
     setBusy(true);
     try {
-      await onSubmit({ ...f, age: Number(f.age), group_size: Number(f.group_size) });
+      await onSubmit({ ..f, age: Number(f.age), group_size: Number(f.group_size) });
     } catch (err) {
       setErrors(err.details || { form: err.message });
     } finally {
