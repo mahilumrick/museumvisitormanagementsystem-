@@ -9,7 +9,6 @@ import { binarySearchAll, linearSearch } from '../algorithms/searching.js';
 import { ApiError } from '../utils/ApiError.js';
 import { validateVisitor } from '../utils/validators.js';
 
-/** Lower number = served first. VIP, Senior and PWD use the priority heap. */
 const PRIORITY = { VIP: 0, Senior: 1, PWD: 1, Student: 2, Regular: 3 };
 const isPriorityLane = (type) => PRIORITY[type] <= 1;
 const SORT_FIELDS = ['full_name', 'age', 'group_size', 'visitor_type', 'visit_date', 'created_at'];
@@ -26,7 +25,7 @@ function sortKey(v, field) {
     case 'age':
     case 'group_size': return Number(v[field]);
     case 'visitor_type': return PRIORITY[v.visitor_type];
-    default: return Date.parse(v[field]) || 0; // visit_date, created_at
+    default: return Date.parse(v[field]) || 0; 
   }
 }
 
@@ -41,24 +40,24 @@ function makeComparator(field, order) {
 
 class VisitorStore {
   constructor() {
-    this.visitors = [];                                  // array (sorting / searching)
-    this.byTicket = new HashMap();                       // DS: HashMap
-    this.byId = new HashMap();                           // DS: HashMap
-    this.regularQueue = new Queue();                     // DS: Queue
-    this.priorityHeap = this._newHeap();                 // DS: Min-Heap
-    this.undoStack = new Stack(20);                      // DS: Stack
-    this.logs = new LinkedList();                        // DS: Linked List
+    this.visitors = [];                                  
+    this.byTicket = new HashMap();                       
+    this.byId = new HashMap();                          
+    this.regularQueue = new Queue();                     
+    this.priorityHeap = this._newHeap();                
+    this.undoStack = new Stack(20);                      
+    this.logs = new LinkedList();                       
   }
 
   _newHeap() {
     return new MinHeap((a, b) => a.rank - b.rank || a.seq - b.seq);
   }
 
-  /* ---------- load / rebuild ---------- */
+  // ----- load / rebuild ----- //
   async init() {
     const logRows = must(await supabase.from('visit_logs').select('*')
       .order('created_at', { ascending: true }).limit(MAX_LOGS));
-    for (const row of logRows) this.logs.prepend(row); // oldest first -> newest ends at head
+    for (const row of logRows) this.logs.prepend(row); 
     await this.reload();
   }
 
@@ -75,7 +74,6 @@ class VisitorStore {
       this.byId.set(v.id, v);
     }
 
-    // Rebuild waiting lines in arrival order from persistent data
     const queued = mergeSort(
       linearSearch(this.visitors, (v) => v.status === 'Queued'),
       (a, b) => Date.parse(a.queued_at) - Date.parse(b.queued_at),
@@ -109,7 +107,7 @@ class VisitorStore {
     return v;
   }
 
-  /* ---------- READ: search + sort ---------- */
+  // ----- READ: search + sort ------- //
   list({ q = '', exact = 'false', type = '', status = '', sortBy = 'created_at', order = 'desc', algo = 'merge' } = {}) {
     const t0 = performance.now();
     let result = this.visitors;
@@ -150,14 +148,14 @@ class VisitorStore {
     };
   }
 
-  /** HashMap lookup - O(1) average. */
+  /** HashMap lookup  */
   getByTicket(code) {
     const v = this.byTicket.get(String(code).trim().toUpperCase());
     if (!v) throw new ApiError(404, 'No visitor found for that ticket code.');
     return v;
   }
 
-  /* ---------- CREATE ---------- */
+  // ----- CREATE ----- //
   _newTicketCode() {
     let code;
     do {
@@ -182,7 +180,7 @@ class VisitorStore {
     return row;
   }
 
-  /* ---------- UPDATE ---------- */
+
   async update(id, input) {
     const existing = this._get(id);
     const clean = validateVisitor(input, { allowPastDate: true });
@@ -193,7 +191,6 @@ class VisitorStore {
     return row;
   }
 
-  /* ---------- DELETE (+ undo via Stack) ---------- */
   async remove(id) {
     const v = this._get(id);
     must(await supabase.from('visitors').delete().eq('id', id).select());
@@ -212,7 +209,7 @@ class VisitorStore {
     return { restored: row, undoAvailable: this.undoStack.size };
   }
 
-  /* ---------- QUEUE ---------- */
+
   async enqueue(id) {
     const v = this._get(id);
     if (v.status !== 'Registered') throw new ApiError(409, `Visitor is already ${v.status}.`);
@@ -255,7 +252,7 @@ class VisitorStore {
     return { priority, regular, serveOrder: [...priority, ...regular] };
   }
 
-  /* ---------- STATS / LOGS ---------- */
+  // ---- STATS / LOGS --- //
   stats() {
     const typeCount = new HashMap();
     const statusCount = new HashMap();
