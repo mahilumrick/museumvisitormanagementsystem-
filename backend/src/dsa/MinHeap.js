@@ -1,7 +1,3 @@
-/**
- * DATA STRUCTURE #4: Min-Heap (Priority Queue) with sift-up / sift-down.
- * Used for: priority waiting line (VIP > Senior/PWD), ties broken by arrival time.
- */
 export class MinHeap {
   constructor(compare = (a, b) => a - b) {
     this.data = [];
@@ -28,7 +24,6 @@ export class MinHeap {
     return top;
   }
 
-  /** Heap-sort style: returns items in priority order without changing this heap. */
   toSortedArray() {
     const copy = new MinHeap(this.compare);
     copy.data = this.data.slice();
