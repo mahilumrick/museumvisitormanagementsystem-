@@ -1,7 +1,3 @@
-/**
- * DATA STRUCTURE #2: Queue (FIFO, linked nodes, O(1) enqueue/dequeue).
- * Used for: the regular visitor waiting line (first come, first served).
- */
 class Node {
   constructor(value) { this.value = value; this.next = null; }
 }
