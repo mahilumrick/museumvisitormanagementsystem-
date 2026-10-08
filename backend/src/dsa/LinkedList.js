@@ -1,7 +1,3 @@
-/**
- * DATA STRUCTURE #5: Singly Linked List.
- * Used for: the activity log (newest entry is prepended at the head, O(1)).
- */
 class Node {
   constructor(value) { this.value = value; this.next = null; }
 }
@@ -24,7 +20,6 @@ export class LinkedList {
     this.length++;
   }
 
-  /** Keep only the first `max` nodes (newest). */
   trim(max) {
     if (max < 1 || this.length <= max) return;
     let cur = this.head;
