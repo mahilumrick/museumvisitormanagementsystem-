@@ -1,12 +1,8 @@
-/**
- * DATA STRUCTURE #3: Stack (LIFO).
- * Used for: UNDO of deleted visitors (last deleted is restored first).
- */
 export class Stack {
   constructor(maxSize = 20) { this.items = []; this.maxSize = maxSize; }
 
   push(item) {
-    if (this.items.length >= this.maxSize) this.items.shift(); // drop the oldest
+    if (this.items.length >= this.maxSize) this.items.shift(); 
     this.items.push(item);
   }
 
