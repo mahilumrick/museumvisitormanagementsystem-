@@ -31,7 +31,7 @@ export default function VisitorForm({ initial, onSubmit, onCancel }) {
   const [errors, setErrors] = useState({});
   const [busy, setBusy] = useState(false);
 
-  const set = (k) => (e) => setF({ ..f, [k]: e.target.value });
+  const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
 
   async function submit(ev) {
     ev.preventDefault();
