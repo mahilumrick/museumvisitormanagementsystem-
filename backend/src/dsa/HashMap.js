@@ -1,7 +1,4 @@
-/**
- * DATA STRUCTURE #1 + ALGORITHM (djb2 hashing): HashMap with separate chaining.
- * Used for: O(1) average ticket-code lookup, id lookup, and counting stats.
- */
+
 export function djb2(str) {
   let hash = 5381;
   for (let i = 0; i < str.length; i++) {
