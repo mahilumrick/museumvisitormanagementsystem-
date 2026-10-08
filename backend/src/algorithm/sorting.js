@@ -1,8 +1,3 @@
-/**
- * ALGORITHM #1: Merge Sort  - O(n log n), stable.
- * ALGORITHM #2: Quick Sort  - O(n log n) average, in-place, middle pivot.
- * Both take a comparator cmp(a, b) -> negative | 0 | positive and return a NEW array.
- */
 export function mergeSort(arr, cmp) {
   if (arr.length <= 1) return arr.slice();
   const mid = arr.length >> 1;
@@ -21,7 +16,7 @@ export function mergeSort(arr, cmp) {
 
 function partition(a, lo, hi, cmp) {
   const mid = (lo + hi) >> 1;
-  [a[mid], a[hi]] = [a[hi], a[mid]]; // middle element as pivot
+  [a[mid], a[hi]] = [a[hi], a[mid]]; 
   const pivot = a[hi];
   let i = lo;
   for (let j = lo; j < hi; j++) {
@@ -39,7 +34,7 @@ export function quickSort(arr, cmp) {
   const sort = (lo, hi) => {
     while (lo < hi) {
       const p = partition(a, lo, hi, cmp);
-      // recurse into the smaller half first to keep the stack shallow
+     
       if (p - lo < hi - p) { sort(lo, p - 1); lo = p + 1; }
       else { sort(p + 1, hi); hi = p - 1; }
     }
