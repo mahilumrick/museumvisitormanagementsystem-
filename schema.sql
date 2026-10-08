@@ -1,4 +1,3 @@
--- Run this in Supabase: SQL Editor -> New query -> Run
 create extension if not exists "pgcrypto";
 
 create table if not exists visitors (
@@ -30,7 +29,5 @@ create table if not exists visit_logs (
 create index if not exists idx_visitors_status on visitors(status);
 create index if not exists idx_visitors_visit_date on visitors(visit_date);
 
--- The backend uses the service_role key (bypasses RLS). Keep RLS on so the
--- tables are not publicly writable with the anon key.
 alter table visitors   enable row level security;
 alter table visit_logs enable row level security;
