@@ -5,7 +5,6 @@ export const VISITOR_TYPES = ['Regular', 'Student', 'Senior', 'PWD', 'VIP'];
 const NAME_RE = /^[A-Za-zÀ-ÿñÑ][A-Za-zÀ-ÿñÑ .'-]{1,59}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-// Validates visitor input. //
 export function validateVisitor(input, { allowPastDate = false } = {}) {
   const errors = {};
   const fullName = String(input.full_name ?? '').trim().replace(/\s+/g, ' ');
@@ -31,7 +30,6 @@ export function validateVisitor(input, { allowPastDate = false } = {}) {
     errors.visit_date = 'Visit date cannot be in the past.';
   }
 
-  // Business rules
   if (!errors.age && !errors.visitor_type) {
     if (type === 'Senior' && age < 60) errors.visitor_type = 'Senior visitors must be 60 or older.';
     if (type === 'Student' && age > 30) errors.visitor_type = 'Student rate applies to age 30 and below.';
