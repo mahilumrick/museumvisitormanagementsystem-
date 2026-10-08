@@ -46,5 +46,4 @@ export function quickSort(arr, cmp) {
   };
   sort(0, a.length - 1);
   return a;
-}
-  
+         }
