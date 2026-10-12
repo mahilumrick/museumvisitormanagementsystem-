@@ -23,6 +23,16 @@ function validate(f, isEdit) {
   return e;
 }
 
+function Field({ label, error, children }) {
+  return (
+    <label className="field">
+      <span>{label}</span>
+      {children}
+      {error && <em className="err">{error}</em>}
+    </label>
+  );
+}
+
 export default function VisitorForm({ initial, onSubmit, onCancel }) {
   const isEdit = Boolean(initial);
   const [f, setF] = useState(initial ?? {
@@ -48,41 +58,33 @@ export default function VisitorForm({ initial, onSubmit, onCancel }) {
     }
   }
 
-  const Field = ({ id, label, children }) => (
-    <label className="field">
-      <span>{label}</span>
-      {children}
-      {errors[id] && <em className="err">{errors[id]}</em>}
-    </label>
-  );
-
   return (
     <div className="modal-back" onClick={onCancel}>
       <form className="modal" onClick={(e) => e.stopPropagation()} onSubmit={submit} noValidate>
         <h2>{isEdit ? 'Edit visitor' : 'Register visitor'}</h2>
         {errors.form && <p className="err">{errors.form}</p>}
 
-        <Field id="full_name" label="Full name">
+        <Field label="Full name" error={errors.full_name}>
           <input value={f.full_name} onChange={set('full_name')} autoFocus />
         </Field>
-        <Field id="email" label="Email">
+        <Field label="Email" error={errors.email}>
           <input type="email" value={f.email} onChange={set('email')} />
         </Field>
         <div className="two">
-          <Field id="age" label="Age">
+          <Field label="Age" error={errors.age}>
             <input type="number" min="1" max="120" value={f.age} onChange={set('age')} />
           </Field>
-          <Field id="group_size" label="Group size">
+          <Field label="Group size" error={errors.group_size}>
             <input type="number" min="1" max="50" value={f.group_size} onChange={set('group_size')} />
           </Field>
         </div>
         <div className="two">
-          <Field id="visitor_type" label="Visitor type">
+          <Field label="Visitor type" error={errors.visitor_type}>
             <select value={f.visitor_type} onChange={set('visitor_type')}>
               {TYPES.map((t) => <option key={t}>{t}</option>)}
             </select>
           </Field>
-          <Field id="visit_date" label="Visit date">
+          <Field label="Visit date" error={errors.visit_date}>
             <input type="date" value={f.visit_date} onChange={set('visit_date')} />
           </Field>
         </div>
@@ -94,4 +96,5 @@ export default function VisitorForm({ initial, onSubmit, onCancel }) {
       </form>
     </div>
   );
-                                                       }
+  }
+
