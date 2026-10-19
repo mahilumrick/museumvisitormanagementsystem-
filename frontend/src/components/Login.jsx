@@ -4,21 +4,24 @@ import { setAuth } from '../auth.js';
 const BASE = import.meta.env.VITE_API_URL || '';
 
 export default function Login({ onLogin }) {
+  const [who, setWho] = useState('user'); // 'user' | 'admin'
   const [mode, setMode] = useState('login');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [adminCode, setAdminCode] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [msg, setMsg] = useState({ text: '', ok: false });
   const [loading, setLoading] = useState(false);
   const isRegister = mode === 'register';
+  const isAdmin = who === 'admin';
 
-  function switchMode() {
-    setMode(isRegister ? 'login' : 'register');
+  function clear() {
     setMsg({ text: '', ok: false });
     setPassword('');
     setConfirm('');
+    setAdminCode('');
   }
 
   async function submit(e) {
@@ -30,19 +33,19 @@ export default function Login({ onLogin }) {
     }
     setLoading(true);
     try {
+      const body = isRegister
+        ? { full_name: fullName, email, password, ...(isAdmin ? { admin_code: adminCode } : {}) }
+        : { email, password, as: who };
       const res = await fetch(`${BASE}/api/auth/${mode}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(isRegister
-          ? { full_name: fullName, email, password }
-          : { email, password }),
+        body: JSON.stringify(body),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) return setMsg({ text: data.error || 'Failed. Try again.', ok: false });
       if (isRegister) {
         setMode('login');
-        setPassword('');
-        setConfirm('');
+        clear();
         return setMsg({ text: 'Account created! You can log in now.', ok: true });
       }
       const auth = { token: data.token, role: data.role, username: data.name };
@@ -59,7 +62,19 @@ export default function Login({ onLogin }) {
     <div className="auth-page">
       <form onSubmit={submit} className="auth-card">
         <h1 className="auth-title">Museum Visitor Management</h1>
-        <p className="auth-sub">{isRegister ? 'Sign up to visit the museum' : 'Log in to continue'}</p>
+
+        <div className="auth-tabs">
+          <button type="button" className={!isAdmin ? 'auth-tab active' : 'auth-tab'}
+            onClick={() => { setWho('user'); clear(); }}>User</button>
+          <button type="button" className={isAdmin ? 'auth-tab active' : 'auth-tab'}
+            onClick={() => { setWho('admin'); clear(); }}>Admin</button>
+        </div>
+
+        <p className="auth-sub">
+          {isRegister
+            ? (isAdmin ? 'Create an admin account' : 'Sign up to visit the museum')
+            : (isAdmin ? 'Admin log in' : 'Log in to continue')}
+        </p>
 
         {isRegister && (
           <>
@@ -91,15 +106,24 @@ export default function Login({ onLogin }) {
           </>
         )}
 
+        {isRegister && isAdmin && (
+          <>
+            <label className="auth-label">Admin code</label>
+            <input className="auth-input" type="password" value={adminCode}
+              onChange={(e) => setAdminCode(e.target.value)} required />
+          </>
+        )}
+
         {msg.text && <p className={msg.ok ? 'auth-msg ok' : 'auth-msg err'}>{msg.text}</p>}
 
         <button type="submit" className="auth-btn" disabled={loading}>
           {loading ? 'Please wait...' : isRegister ? 'Sign up' : 'Log in'}
         </button>
-        <button type="button" className="auth-link" onClick={switchMode}>
+        <button type="button" className="auth-link"
+          onClick={() => { setMode(isRegister ? 'login' : 'register'); clear(); }}>
           {isRegister ? 'Already have an account? Log in' : "Don't have an account? Sign up"}
         </button>
       </form>
     </div>
   );
-          }
+}
