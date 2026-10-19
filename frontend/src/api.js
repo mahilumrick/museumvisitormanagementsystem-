@@ -1,14 +1,20 @@
+import { authHeaders, clearAuth } from './auth.js';
+
 const BASE = import.meta.env.VITE_API_URL || '';
 
 async function request(path, { method = 'GET', body } = {}) {
   const res = await fetch(`${BASE}/api${path}`, {
     method,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: body ? JSON.stringify(body) : undefined,
   });
   const data = await res.json().catch(() => ({}));
+  if (res.status === 401) {
+    clearAuth();
+    window.location.reload();
+  }
   if (!res.ok) {
-    const err = new Error(data.message || 'Request failed.');
+    const err = new Error(data.message || data.error || 'Request failed.');
     err.details = data.details;
     throw err;
   }
