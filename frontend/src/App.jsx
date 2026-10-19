@@ -31,7 +31,7 @@ export default function App() {
   const logout = () => { clearAuth(); setAuthState(null); };
 
   return (
-    <div className="shell">
+    <div className={isAdmin ? 'shell' : 'shell is-user'}>
       <header className="masthead topbar">
         <button className="menu-btn" onClick={() => setOpen(!open)} aria-label="Menu">☰</button>
         <h1>Museum Visitor Management</h1>
